@@ -1,0 +1,18 @@
+{
+  "name": "yahooWeather",
+  "homepage": "https://github.com/wxb/cloudAPI",
+  "authors": [
+    "wangxb <wxb0328@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

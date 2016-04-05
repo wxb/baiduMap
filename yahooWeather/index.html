@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <!-- 引入样式CSS文件-->
+    <!-- link(rel="stylesheet", href="./css/bootstrap.min.css")-->
+    <!-- link(rel="stylesheet", href="./css/weather.css")-->
+  </head>
+  <body>
+    <div class="wrapper shadow">
+      <div class="top">
+        <div id="btn" class="btn noselect">C</div><img id="big" src="" alt="">
+        <p id="deg" class="text deg"></p>
+        <div class="text-city"><span>输入城市：</span>
+          <input id="city" type="text" value="">
+        </div>
+      </div>
+      <div class="bot">
+        <ul>
+          <li>
+            <h1 id="forecast0"></h1><img id="forecastimg0">
+            <p id="forecastdeg0"></p>
+          </li>
+          <li>
+            <h1 id="forecast1"></h1><img id="forecastimg1">
+            <p id="forecastdeg1"></p>
+          </li>
+          <li>
+            <h1 id="forecast2"></h1><img id="forecastimg2">
+            <p id="forecastdeg2"></p>
+          </li>
+          <li>
+            <h1 id="forecast3"></h1><img id="forecastimg3">
+            <p id="forecastdeg3"></p>
+          </li>
+          <li>
+            <h1 id="forecast4"></h1><img id="forecastimg4">
+            <p id="forecastdeg4"></p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </body>
+  <!-- 引入脚本Javascript文件-->
+  <script type="text/javascript" src="./js/jquery.min.js"></script>
+  <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+  <script type="text/javascript">
+    $(function(){
+        init();
+    })
+    function init() {
+        getWoeid(selectedCity);
+    }
+    function getWoeid(city) {
+        var woeidYQL = 'select woeid from geo.placefinder where text="' + city + '"&format=json';
+        var jsonURL = baseYahooURL + woeidYQL;
+        $.getJSON(jsonURL, woeidDownloaded);
+    }
+    
+    function woeidDownloaded(data) {
+        var woeid = null;
+        if (data.query.count <= 0) {
+            $('#city').val("No city found");
+            $('#deg').html("");
+            setImage(999, $("#big")[0]);
+            for (var i = 0; i <= 4; i++) {
+                $('#forecast' + i).html("");
+                setImage(999, $("#forecastimg" + i)[0]);
+                $('#forecastdeg' + i).html("");
+            }
+            return;
+        } else if (data.query.count == 1) {
+            woeid = data.query.results.Result.woeid;
+        } else {
+            woeid = data.query.results.Result[0].woeid;
+        }
+        console.log(woeid);  // 识别天气预报城市的地区代号
+        getWeatherInfo(woeid);
+    }
+  </script>
+</html>

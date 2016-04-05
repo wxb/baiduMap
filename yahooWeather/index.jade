@@ -1,0 +1,75 @@
+doctype html
+html(lang="zh-CN")
+    head
+        // 引入样式CSS文件
+        // link(rel="stylesheet", href="./css/bootstrap.min.css")
+        // link(rel="stylesheet", href="./css/weather.css")
+    body
+        div.wrapper.shadow
+            div.top
+                div.btn.noselect#btn
+                    | C
+                img#big(src="", alt="")
+                p#deg.text.deg
+                div.text-city
+                    span 输入城市：
+                    input#city(type="text", value="")
+            div.bot
+                ul
+                    li
+                        h1#forecast0
+                        img#forecastimg0
+                        p#forecastdeg0
+                    li
+                        h1#forecast1
+                        img#forecastimg1
+                        p#forecastdeg1
+                    li
+                        h1#forecast2
+                        img#forecastimg2
+                        p#forecastdeg2
+                    li
+                        h1#forecast3
+                        img#forecastimg3
+                        p#forecastdeg3
+                    li
+                        h1#forecast4
+                        img#forecastimg4
+                        p#forecastdeg4
+
+    // 引入脚本Javascript文件
+    script(type="text/javascript", src="./js/jquery.min.js")
+    script(type="text/javascript", src="./js/bootstrap.min.js")
+    script(type='text/javascript').
+        $(function(){
+            init();
+        })
+        function init() {
+            getWoeid(selectedCity);
+        }
+        function getWoeid(city) {
+            var woeidYQL = 'select woeid from geo.placefinder where text="' + city + '"&format=json';
+            var jsonURL = baseYahooURL + woeidYQL;
+            $.getJSON(jsonURL, woeidDownloaded);
+        }
+
+        function woeidDownloaded(data) {
+            var woeid = null;
+            if (data.query.count <= 0) {
+                $('#city').val("No city found");
+                $('#deg').html("");
+                setImage(999, $("#big")[0]);
+                for (var i = 0; i <= 4; i++) {
+                    $('#forecast' + i).html("");
+                    setImage(999, $("#forecastimg" + i)[0]);
+                    $('#forecastdeg' + i).html("");
+                }
+                return;
+            } else if (data.query.count == 1) {
+                woeid = data.query.results.Result.woeid;
+            } else {
+                woeid = data.query.results.Result[0].woeid;
+            }
+            console.log(woeid);  // 识别天气预报城市的地区代号
+            getWeatherInfo(woeid);
+        }
